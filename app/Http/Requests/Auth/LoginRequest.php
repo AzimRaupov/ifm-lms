@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -41,15 +42,15 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $user = User::where('email', $this->email)->first();
 
+        if (! $user || $user->password !== $this->password) {
             throw ValidationException::withMessages([
-                'email' => trans('Неверная электронная почта или пароль.'),
+                'email' => 'Неверная электронная почта или пароль.',
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        Auth::login($user, $this->boolean('remember'));
     }
 
     /**

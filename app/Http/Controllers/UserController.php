@@ -114,6 +114,10 @@ $user->save();
                'students'=>$students_t
                ]);
        }
+        elseif($user->role=="admin"){
+            $teachers=User::query()->where('role','teacher')->get();
+           return view('admin.dashboard',compact('teachers'));
+        }
     }
 
     public function profile_settings()
