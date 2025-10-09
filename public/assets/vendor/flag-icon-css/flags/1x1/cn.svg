@@ -1,11 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="flag-icons-cn" viewBox="0 0 512 512">
-  <defs>
-    <path id="a" fill="#ffde00" d="M1-.3-.7.8 0-1 .6.8-1-.3z"/>
-  </defs>
-  <path fill="#de2910" d="M0 0h512v512H0z"/>
-  <use xlink:href="#a" width="30" height="20" transform="matrix(76.8 0 0 76.8 128 128)"/>
-  <use xlink:href="#a" width="30" height="20" transform="rotate(-121 142.6 -47) scale(25.5827)"/>
-  <use xlink:href="#a" width="30" height="20" transform="rotate(-98.1 198 -82) scale(25.6)"/>
-  <use xlink:href="#a" width="30" height="20" transform="rotate(-74 272.4 -114) scale(25.6137)"/>
-  <use xlink:href="#a" width="30" height="20" transform="matrix(16 -19.968 19.968 16 256 230.4)"/>
+<svg xmlns="http://www.w3.org/2000/svg" id="flag-icons-tj" viewBox="0 0 640 480">
+    <path fill="#060" d="M0 320h640v160H0z"/>
+    <path fill="#fff" d="M0 160h640v160H0z"/>
+    <path fill="#c00" d="M0 0h640v160H0z"/>
+    <path fill="#f8c300" d="M319.9 190.6c-10.6 0-19.1 8.6-19.1 19.1 0 7.2 4 13.4 9.9 16.8-5.9 2.8-9.9 8.8-9.9 15.8 0 9.8 8 17.8 17.8 17.8s17.8-8 17.8-17.8c0-7-4-13-9.9-15.8 5.9-3.4 9.9-9.6 9.9-16.8 0-10.6-8.6-19.1-19.1-19.1zm0 82.7-11.1 17.1h22.2zm-32.7-11.8-9.3 14.2h18.5zm65.4 0-9.3 14.2h18.5zm-32.7-24.8-7.5 11.5h15z"/>
+    <path fill="#f8c300" d="M291.5 302.3c-4.9 0-8.9 4-8.9 8.9v3.6h-7.5v8.4h89.8v-8.4h-7.5v-3.6c0-4.9-4-8.9-8.9-8.9z"/>
 </svg>

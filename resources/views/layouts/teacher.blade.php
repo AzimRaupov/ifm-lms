@@ -591,8 +591,9 @@
                             </div>
                         </a>
 
-                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account" aria-labelledby="accountNavbarDropdown" style="width: 16rem;">
-                            <div class="dropdown-item-text">
+                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account"
+                             aria-labelledby="accountNavbarDropdown"
+                             style="width: auto; min-width: 16rem; max-width: 90vw; word-break: break-all;">                            <div class="dropdown-item-text">
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-sm avatar-soft-primary avatar-circle avatr-img" >
                                     </div>
@@ -723,7 +724,9 @@
                     <div class="nav-item">
                         <a class="nav-link {{ (request()->routeIs('dashboard')) ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <i class="bi bi-bar-chart nav-icon"></i>
-                            <span class="nav-link-title">Панель управления</span>
+                            <span class="nav-link-title">
+    {{ __('messages.controlpanel') != 'messages.controlpanel' ? __('messages.controlpanel') : 'Панель управления' }}
+</span>
                         </a>
                     </div>
 
@@ -829,39 +832,54 @@
 
                     <li class="navbar-vertical-footer-list-item">
                         <!-- Language -->
+                        @php
+                            $locale = session('locale', 'ru'); // по умолчанию русский
+                            $flags = [
+                                'ru' => asset('assets/vendor/flag-icon-css/flags/1x1/ca.svg'),
+                                'tj' => asset('assets/vendor/flag-icon-css/flags/1x1/ii.webp'),
+                                'en' => asset('assets/vendor/flag-icon-css/flags/1x1/us.svg'),
+                            ];
+                        @endphp
+
                         <div class="dropdown dropup">
-                            <button type="button" class="btn btn-ghost-secondary btn-icon rounded-circle" id="selectLanguageDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-dropdown-animation="">
-                                <img class="avatar avatar-xss avatar-circle" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/us.svg')}}" alt="United States Flag">
+                            <button type="button" class="btn btn-ghost-secondary btn-icon rounded-circle" id="selectLanguageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img id="currentFlag" class="avatar avatar-xss avatar-circle" src="{{ $flags[$locale] }}" alt="Flag">
                             </button>
 
                             <div class="dropdown-menu navbar-dropdown-menu-borderless" aria-labelledby="selectLanguageDropdown">
-                                <span class="dropdown-header">Select language</span>
-                                <a class="dropdown-item" href="#">
-                                    <img class="avatar avatar-xss avatar-circle me-2" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/us.svg')}}" alt="Flag">
-                                    <span class="text-truncate" title="English">English (US)</span>
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <img class="avatar avatar-xss avatar-circle me-2" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/gb.svg')}}" alt="Flag">
-                                    <span class="text-truncate" title="English">English (UK)</span>
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <img class="avatar avatar-xss avatar-circle me-2" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/de.svg')}}" alt="Flag">
-                                    <span class="text-truncate" title="Deutsch">Deutsch</span>
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <img class="avatar avatar-xss avatar-circle me-2" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/dk.svg')}}" alt="Flag">
-                                    <span class="text-truncate" title="Dansk">Dansk</span>
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <img class="avatar avatar-xss avatar-circle me-2" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/it.svg')}}" alt="Flag">
-                                    <span class="text-truncate" title="Italiano">Italiano</span>
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <img class="avatar avatar-xss avatar-circle me-2" src="{{asset('assets/vendor/flag-icon-css/flags/1x1/cn.svg')}}" alt="Flag">
-                                    <span class="text-truncate" title="中文 (繁體)">中文 (繁體)</span>
-                                </a>
+                                <span class="dropdown-header">Выберите язык</span>
+
+                                @foreach(['ru' => 'Русский', 'tj' => 'Тоҷикӣ', 'en' => 'English'] as $key => $name)
+                                    <a class="dropdown-item language-select" href="{{ route('lang.switch', $key) }}" data-lang="{{ $key }}">
+                                        <img class="avatar avatar-xss avatar-circle me-2" src="{{ $flags[$key] }}" alt="{{ $name }} Flag">
+                                        <span class="text-truncate" title="{{ $name }}">{{ $name }}</span>
+                                    </a>
+                                @endforeach
                             </div>
                         </div>
+
+                        <script>
+                            const flags = {
+                                ru: "{{ $flags['ru'] }}",
+                                tj: "{{ $flags['tj'] }}",
+                                en: "{{ $flags['en'] }}"
+                            };
+
+                            document.querySelectorAll('.language-select').forEach(item => {
+                                item.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    const lang = this.dataset.lang;
+
+                                    // меняем флаг на кнопке
+                                    document.getElementById('currentFlag').src = flags[lang];
+
+                                    // обновляем язык на сервере через переход по ссылке
+                                    window.location.href = this.href;
+                                });
+                            });
+                        </script>
+
+
 
                         <!-- End Language -->
                     </li>

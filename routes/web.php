@@ -3,6 +3,19 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+
+
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, config('app.available_locales'))) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('lang.switch');
+
+
+
+
+
 Route::get('/',[\App\Http\Controllers\SystemController::class,'home'])->name('home');
 
 

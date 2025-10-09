@@ -1,347 +1,343 @@
 @extends('layouts.app')
 
-
 @section('head')
-
     <script src="{{asset('js/main.js')}}"></script>
 @endsection
 
 @section('content-main')
     @if($tests->count()>0)
-
-<style>
-    input[type="radio"],
-    input[type="checkbox"] {
-        transform: scale(1.5); /* увеличивает размер */
-        margin-right: 8px;
-        cursor: pointer;
-    }
-    /*  dfd*/
-
-
-    /* Общий стиль карточек теста */
-    .tests_list.card {
-        max-width: 100%;
-        margin: 0 auto;
-        background-color: #d6e1f1;
-        padding: 15px;
-        border-radius: 8px;
-    }
-
-    /* Контейнер с шагами matching */
-    .matching-test {
-        gap: 15px;
-    }
-
-    /* На телефонах и планшетах */
-    @media (max-width: 768px) {
-        .tests_list.card {
-            width: 100%;
-            margin-left: 0;
-            padding: 10px;
-        }
-
-        /* Для matching: элементы один под другим */
-        .matching-test .col-md-6 {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-
-        /* Уменьшаем кнопки */
-        .next-tab-btn,
-        .btn-success {
-            width: 100%;
-            font-size: 16px;
-        }
-
-        /* Радиокнопки и чекбоксы с большим кликабельным полем */
-        .form-check-input {
-            transform: scale(1.3);
-            margin-right: 8px;
-        }
-    }
-
-    /* На совсем маленьких экранах */
-    @media (max-width: 480px) {
-        h2 {
-            font-size: 18px;
-        }
-        .list-group-item {
-            font-size: 14px;
-            padding: 8px;
-        }
-    }
-
-    /* Общий стиль для matching */
-    .matching-test {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    /* Колонки для ПК */
-    .matching-test .col-md-6 {
-        flex: 0 0 48%; /* почти 50%, но с зазором */
-        max-width: 48%;
-    }
-
-    /* На телефоне — вертикально */
-    @media (max-width: 768px) {
-        .matching-test .col-md-6 {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-    }
-
-
-
-</style>
-    <br>
-    <div class="text-center">
-        <ul class="nav nav-segment nav-pills mb-7" role="tablist">
-            @foreach($tests as $index => $test)
-                <li class="nav-item">
-                    <a class="nav-link {{ $index === 0 ? 'active' : '' }}"
-                       id="test_nav{{ $test->id }}"
-                       href="#tab{{ $test->id }}"
-                       data-bs-toggle="pill"
-                       data-bs-target="#tab{{ $test->id }}"
-                       role="tab"
-                       aria-controls="tab{{ $test->id }}"
-                       aria-selected="{{ $index === 0 ? 'true' : 'false' }}">
-                        Тест {{ $index + 1 }}
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-
-    <div class="tab-content">
-        @foreach($tests as $index => $test)
-            <div class="tests_list card tab-pane fade {{ $index === 0 ? 'show active' : '' }}"
-                 id="tab{{ $test->id }}"
-                 role="tabpanel"
-                 style="width: 1000px; margin-left: 20px; background-color: #d6e1f1;"
-                 aria-labelledby="test_nav{{ $test->id }}">
-                <div class="card-body" data-name="{{ $test->id }}" data-value="{{ $test->type_test }}">
-                    <h2 style="text-align: center">{{ $test->text }}</h2> <br>
-
-                    @if ($test->type_test == "question_answer")
-                        <textarea class="form-control" id="answer" name="answer_{{ $test->id }}" placeholder="Textarea field" rows="4"></textarea>
-
-                    @elseif ($test->type_test == "one_correct" || $test->type_test == "list_correct")
-                        @if (!empty($test->variantss) && is_iterable($test->variantss))
-                            @foreach($test->variantss as $in => $variant)
-                                <p>
-                                    <input type="{{ $test->type_test == "one_correct" ? "radio" : "checkbox" }}"
-                                           id="variant-{{ $in }}"
-                                           name="correct_{{ $test->id }}[]"
-                                           value="{{ $in }}"
-                                           class="form-check-input ms-2">
-                                    <label for="variant-{{ $in }}">{{ $variant->variant }}</label>
-                                </p>
-                            @endforeach
-                        @else
-                            <p class="text-danger">{{ dd($test) }}</p>
-
-                        @endif
-
-                    @elseif ($test->type_test == "matching")
-                        @php
-                            // Перемешиваем коллекцию lists2
-                            $test->lists2 = $test->lists2->shuffle();
-                        @endphp
-                        <div class="row matching-test" data-test-id="{{ $test->id }}">
-                            <div class="col-md-6">
-                                <div id="list1-{{ $test->id }}" class="list-group js-sortable list1">
-                                    @foreach($test->lists1 as $in => $list)
-                                        <div class="list-group-item" id="item1-{{ $test->id }}-{{ $in }}">{{ $list->str }}</div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="list2-{{ $test->id }}" class="list-group js-sortable list2">
-                                    @foreach($test->lists2 as $in => $list)
-                                        <div class="list-group-item bg-light" id="item2-{{ $test->id }}-{{ $in }}">{{ $list->str }}</div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    @elseif ($test->type_test == "true_false")
-                        <p>
-                            <input type="radio" id="true_{{ $test->id }}" name="true_false_{{ $test->id }}" value="1" class="form-check-input ms-2">
-                            <label for="true_{{ $test->id }}">Да</label>
-                        </p>
-                        <p>
-                            <input type="radio" id="false_{{ $test->id }}" name="true_false_{{ $test->id }}" value="0" class="form-check-input ms-2">
-                            <label for="false_{{ $test->id }}">Нет</label>
-                        </p>
-                    @endif
-
-                    {{-- Кнопка "Вперед", если следующий тест существует --}}
-                    @if ($index < count($tests) - 1)
-                        <div class="text-center mt-4">
-                            <button type="button" class="btn btn-primary next-tab-btn" data-next-tab="#tab{{ $tests[$index + 1]->id }}">
-                                Вперед
-                            </button>
-                        </div>
-                    @endif
-
-                    {{-- Кнопка "Сдать тесты" на последнем тесте --}}
-                    @if ($index === count($tests) - 1)
-                        <div class="text-center mt-4">
-                            <button class="btn btn-success" onclick="pr_test()">Сдать тесты</button>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-    @else
-        @include('components.my.spinner')
-        <script>
-            function while_check(){
-                reqman("{{route('api.vocabulary.isset')}}", "POST", {id:{{$request->id}}}).then(rr => {
-                    console.log(rr);
-                    if(rr.count){
-                        finish();
-                        location.reload();
-                    }
-                });
+        <style>
+            :root {
+                --primary-color: #2563eb;
+                --success-color: #10b981;
+                --bg-color: #f3f4f6;
+                --card-bg: #ffffff;
+                --text-color: #1f2937;
+                --border-color: #e5e7eb;
+                --shadow: 0 10px 30px rgba(0,0,0,0.05);
+                --shadow-hover: 0 12px 28px rgba(0,0,0,0.1);
+                --radius: 16px;
             }
 
-            setInterval(function() {
-                while_check();
-            }, 3000);
-        </script>
+            body {
+                background: var(--bg-color);
+                font-family: "Inter", sans-serif;
+                padding: 2rem 0;
+            }
+
+            .nav-segment {
+                background: #fff;
+                padding: 0.5rem;
+                border-radius: var(--radius);
+                display: inline-flex;
+                gap: 0.5rem;
+                box-shadow: var(--shadow);
+                margin-bottom: 2rem;
+            }
+
+            .nav-segment .nav-link {
+                padding: 0.5rem 1rem;
+                border-radius: 8px;
+                font-weight: 500;
+                color: #6b7280;
+                transition: all 0.3s;
+            }
+
+            .nav-segment .nav-link.active {
+                background: var(--primary-color);
+                color: #fff;
+                box-shadow: var(--shadow-hover);
+            }
+
+            /* Test Card */
+            .tests_list.card {
+                max-width: 900px;
+                margin: 2rem auto;
+                border-radius: var(--radius);
+                background: var(--card-bg);
+                padding: 2rem;
+                box-shadow: var(--shadow);
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+
+            .tests_list.card:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-hover);
+            }
+
+            .tests_list h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+                color: var(--text-color);
+            }
+
+            /* Form Controls */
+            .form-control {
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 0.75rem;
+                font-size: 1rem;
+                transition: all 0.3s;
+            }
+
+            .form-control:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            }
+
+            /* Answer options */
+            .answer-option {
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 0.75rem 1rem;
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .answer-option:hover {
+                border-color: var(--primary-color);
+                background: #f3f4f6;
+            }
+
+            .answer-option input {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                accent-color: var(--primary-color);
+            }
+
+            .answer-option label {
+                flex: 1;
+                margin: 0;
+                font-size: 1rem;
+                cursor: pointer;
+            }
+
+            .answer-option input:checked ~ label {
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            /* Matching test */
+            .matching-test {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                margin-top: 1.5rem;
+            }
+
+            .matching-column {
+                background: #f9fafb;
+                border-radius: var(--radius);
+                padding: 1rem;
+                box-shadow: var(--shadow);
+            }
+
+            .matching-column h3 {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #6b7280;
+                margin-bottom: 1rem;
+            }
+
+            .list-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .list-group-item {
+                padding: 0.75rem 1rem;
+                border-radius: 10px;
+                border: 1px solid var(--border-color);
+                background: #fff;
+                cursor: grab;
+                transition: all 0.2s;
+                font-weight: 500;
+            }
+
+            .list-group-item:hover {
+                box-shadow: var(--shadow-hover);
+                transform: translateY(-2px);
+            }
+
+            .list1 .list-group-item {
+                cursor: default;
+                background: #e0e7ff;
+                color: #1e3a8a;
+                border: none;
+            }
+
+            .sortable-ghost {
+                opacity: 0.5;
+            }
+
+            /* Buttons */
+            .btn {
+                padding: 0.75rem 1.5rem;
+                border-radius: 10px;
+                font-weight: 500;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-primary { background: var(--primary-color); color:#fff; }
+            .btn-success { background: var(--success-color); color:#fff; }
+
+            .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+            @media(max-width:768px) { .matching-test { grid-template-columns: 1fr; } .btn { width: 100%; } }
+        </style>
+
+        <div class="text-center mb-4">
+            <ul class="nav nav-segment nav-pills" role="tablist">
+                @foreach($tests as $index => $test)
+                    <li class="nav-item">
+                        <a class="nav-link {{ $index === 0 ? 'active' : '' }}"
+                           id="test_nav{{ $test->id }}"
+                           href="#tab{{ $test->id }}"
+                           data-bs-toggle="pill"
+                           data-bs-target="#tab{{ $test->id }}"
+                           role="tab"
+                           aria-controls="tab{{ $test->id }}"
+                           aria-selected="{{ $index === 0 ? 'true' : 'false' }}">
+                            Вопрос {{ $index + 1 }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            @foreach($tests as $index => $test)
+                <div class="tests_list card tab-pane fade {{ $index===0?'show active':'' }}" id="tab{{ $test->id }}" role="tabpanel" aria-labelledby="test_nav{{ $test->id }}">
+                    <div class="card-body" data-name="{{ $test->id }}" data-value="{{ $test->type_test }}">
+                        <h2>{{ $test->text }}</h2>
+
+                        @if($test->type_test=="question_answer")
+                            <textarea class="form-control" name="answer_{{ $test->id }}" rows="6" placeholder="Введите ответ..."></textarea>
+                        @elseif($test->type_test=="one_correct" || $test->type_test=="list_correct")
+                            @foreach($test->variantss as $in=>$variant)
+                                <div class="answer-option">
+                                    <input type="{{ $test->type_test=="one_correct"?"radio":"checkbox" }}"
+                                           id="variant-{{ $test->id }}-{{ $in }}"
+                                           name="correct_{{ $test->id }}[]"
+                                           value="{{ $in }}">
+                                    <label for="variant-{{ $test->id }}-{{ $in }}">{{ $variant->variant }}</label>
+                                </div>
+                            @endforeach
+                        @elseif($test->type_test=="matching")
+                            @php $test->lists2 = $test->lists2->shuffle(); @endphp
+                            <div class="matching-test" data-test-id="{{ $test->id }}">
+                                <div class="matching-column">
+                                    <h3>Вопросы</h3>
+                                    <div id="list1-{{ $test->id }}" class="list-group list1 js-sortable">
+                                        @foreach($test->lists1 as $in=>$list)
+                                            <div class="list-group-item" id="item1-{{ $test->id }}-{{ $in }}">
+                                                {{ $list->str }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="matching-column">
+                                    <h3>Ответы</h3>
+                                    <div id="list2-{{ $test->id }}" class="list-group list2 js-sortable">
+                                        @foreach($test->lists2 as $in=>$list)
+                                            <div class="list-group-item" id="item2-{{ $test->id }}-{{ $in }}">
+                                                {{ $list->str }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif($test->type_test=="true_false")
+                            <div class="answer-option">
+                                <input type="radio" id="true_{{ $test->id }}" name="true_false_{{ $test->id }}" value="1">
+                                <label for="true_{{ $test->id }}">Да</label>
+                            </div>
+                            <div class="answer-option">
+                                <input type="radio" id="false_{{ $test->id }}" name="true_false_{{ $test->id }}" value="0">
+                                <label for="false_{{ $test->id }}">Нет</label>
+                            </div>
+                        @endif
+
+                        @if($index < count($tests)-1)
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary next-tab-btn" data-next-tab="#tab{{ $tests[$index+1]->id }}">
+                                    Следующий вопрос →
+                                </button>
+                            </div>
+                        @endif
+
+                        @if($index === count($tests)-1)
+                            <div class="text-center mt-4">
+                                <button class="btn btn-success" onclick="pr_test()">✓ Завершить тест</button>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
     @endif
-
-
 @endsection
 
 @section('script')
-    <script>
-
-        function check_test(answer) {
-
-            $.ajax({
-                url: `{{ route('test.check') }}`,
-                type: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                contentType: "application/json",
-                data: JSON.stringify({
-                    'id': {{$request->id}},
-                    'answer': answer
-                }),
-                success: function (res) {
-                    console.log(res);
-                      location.reload();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Ошибка:", error);
-                    console.error("Status:", status);
-                    console.error("Response:", xhr.responseText);
-                }
-            });
-        }
-
-        function pr_test() {
-            const tests = document.querySelectorAll('.tests_list');
-            const results = [];
-
-            tests.forEach((test) => {
-                const testId = test.querySelector('.card-body').getAttribute('data-name');
-                const typeTest = test.querySelector('.card-body').getAttribute('data-value');
-
-                let correct = null;
-
-                if (typeTest === "question_answer") {
-                    correct = test.querySelector('textarea').value;
-                } else if (typeTest === "one_correct" || typeTest === "true_false") {
-                    const selectedRadio = test.querySelector('.card-body input[type="radio"]:checked');
-                    correct = selectedRadio ? selectedRadio.value : null;
-                } else if (typeTest === "list_correct") {
-                    const checkboxes = test.querySelectorAll('.card-body input[type="checkbox"]');
-                    const checkedCheckboxes = [];
-                    checkboxes.forEach(checkbox => {
-                        if (checkbox.checked) checkedCheckboxes.push(checkbox.value);
-                    });
-                    correct = checkedCheckboxes;
-                } else if (typeTest === "matching") {
-                    const matchingResults = [];
-                    const list2 = test.querySelector(`#list2-${testId}`);
-                    if (list2) {
-                        list2.querySelectorAll('.list-group-item').forEach(item => {
-                            matchingResults.push(item.textContent.trim());
-                        });
-                    }
-                    correct = matchingResults;
-                }
-
-                results.push({
-                    test_id: testId,
-                    type: typeTest,
-                    answer: correct
-                });
-            });
-
-
-           check_test(results);
-        }
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll('.matching-test').forEach(container => {
-                const testId = container.getAttribute('data-test-id');
-
-                const list1 = document.getElementById(`list1-${testId}`);
-                const list2 = document.getElementById(`list2-${testId}`);
-
-                if (list1 && list2) {
-                    // Первая колонка: запрет на сортировку и перемещение элементов из неё
-                    new Sortable(list1, {
-                        animation: 150,
-                        group: {
-                            name: "matching-group-" + testId,
-                            pull: "clone", // клонирование, нельзя перемещать из list1
-                            put: false
-                        },
-                        sort: false,
-                    });
-
-                    // Вторая колонка: можно сортировать и принимать элементы из list1
-                    new Sortable(list2, {
-                        animation: 150,
-                        group: {
-                            name: "matching-group-" + testId,
-                            pull: false,  // нельзя вытаскивать из list2
-                            put: true     // можно положить сюда элементы из list1
-                        },
-                        sort: true,
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.next-tab-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const nextTabSelector = button.getAttribute('data-next-tab');
-                    const nextTabLink = document.querySelector(`a[href="${nextTabSelector}"]`);
+            document.querySelectorAll('.matching-test').forEach(container=>{
+                const testId = container.dataset.testId;
+                const list1 = document.getElementById(`list1-${testId}`);
+                const list2 = document.getElementById(`list2-${testId}`);
+                if(list1 && list2){
+                    new Sortable(list1, { sort:false, group:{name:'match-'+testId, pull:'clone', put:false} });
+                    new Sortable(list2, { animation:200, group:{name:'match-'+testId, pull:false, put:true} });
+                }
+            });
 
-                    if (nextTabLink) {
-                        new bootstrap.Tab(nextTabLink).show();
-                    }
+            document.querySelectorAll('.next-tab-btn').forEach(btn=>{
+                btn.addEventListener('click',()=>{
+                    const nextLink = document.querySelector(`a[href="${btn.dataset.nextTab}"]`);
+                    if(nextLink) new bootstrap.Tab(nextLink).show();
                 });
             });
         });
+
+        function pr_test(){
+            const tests = document.querySelectorAll('.tests_list');
+            const results = [];
+            tests.forEach(test=>{
+                const testId = test.querySelector('.card-body').dataset.name;
+                const typeTest = test.querySelector('.card-body').dataset.value;
+                let answer = null;
+                if(typeTest==="question_answer"){
+                    answer = test.querySelector('textarea').value;
+                } else if(typeTest==="one_correct"||typeTest==="true_false"){
+                    const sel = test.querySelector('input[type="radio"]:checked');
+                    answer = sel?sel.value:null;
+                } else if(typeTest==="list_correct"){
+                    answer = Array.from(test.querySelectorAll('input[type="checkbox"]:checked')).map(e=>e.value);
+                } else if(typeTest==="matching"){
+                    answer = Array.from(test.querySelectorAll(`#list2-${testId} .list-group-item`)).map(i=>i.textContent.trim());
+                }
+                results.push({test_id:testId,type:typeTest,answer});
+            });
+
+            $.ajax({
+                url:`{{ route('test.check') }}`,
+                type:"POST",
+                headers:{"X-CSRF-TOKEN":"{{ csrf_token() }}"},
+                contentType:"application/json",
+                data:JSON.stringify({id:{{$request->id}},answer:results}),
+                success:res=>location.reload(),
+                error:(xhr,status,error)=>console.error(error)
+            });
+        }
     </script>
-
-
-
-
 @endsection

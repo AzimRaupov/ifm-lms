@@ -2,22 +2,39 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Subject;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $subjects = [
+            'Таджикский язык',
+            'Литература (на таджикском языке)',
+            'Русский язык',
+            'Литературное чтение (на русском языке)',
+            'Иностранный язык (английский)',
+            'Математика',
+            'Информатика',
+            'Окружающий мир',
+            'Биология',
+            'Химия',
+            'Физика',
+            'География',
+            'История',
+            'Обществознание',
+            'Основы религиозных культур и светской этики',
+            'Музыка',
+            'Изобразительное искусство',
+            'Труд / Технология',
+            'Физическая культура',
+            'Конституция',
+            'Основы искусственного интеллекта',
+        ];
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        foreach ($subjects as $name) {
+            Subject::create(['subject' => $name]);
+        }
     }
 }

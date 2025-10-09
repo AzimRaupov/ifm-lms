@@ -11,12 +11,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Подключаем к web-группе
+        $middleware->web([
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
+        // Алиасы (для проверки ролей и т.п.)
         $middleware->alias([
             'is_teacher' => \App\Http\Middleware\IsTeacher::class,
         ]);
-        $middleware->redirectUsersTo(fn () => route('dashboard'));
 
+        // Куда редиректить после логина
+        $middleware->redirectUsersTo(fn () => route('dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+
     })->create();

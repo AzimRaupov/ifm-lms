@@ -3,46 +3,71 @@
 
 @section('content-main')
 
-    <div class="modal fade" id="createClass" tabindex="-1" aria-labelledby="createClassModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <form action="{{route('admin.class.store')}}" method="post">
-              @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="certificateModalLabel">Поздравляем!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body text-center">
+    <div class="modal fade" id="createClass" tabindex="-1" aria-labelledby="createClassLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <form action="{{ route('admin.class.store') }}" method="POST" class="w-100">
+                @csrf
+                <div class="modal-content shadow-lg border-0 rounded-4 overflow-hidden">
 
-                    <label for="literal"></label>
-                    <input type="text" name="literal" class="form-control" id="literal" placeholder="">
-                    <label for="teacher_id">Teacher</label>
-                    <select name="teacher_id" class="form-select">
-                        @foreach($teachers as $teacher)
-                            <option value="{{$teacher->id}}">{{$teacher->name}}</option>
-                        @endforeach
-                    </select>
+                    <!-- Заголовок -->
+                    <div class="modal-header border-0 bg-primary bg-gradient text-white py-3 px-4">
+                        <h5 class="modal-title fw-semibold" id="createClassLabel">Создание класса</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+
+                    <!-- Тело -->
+                    <div class="modal-body py-4 px-4">
+                        <div class="row g-4 align-items-center"> <!-- увеличил отступы между элементами -->
+
+                            <div class="col-md-5 text-md-end">
+                                <label for="literal" class="form-label fw-semibold mb-0">Имя класса</label>
+                            </div>
+                            <div class="col-md-7">
+                                <input type="text" name="literal" id="literal" class="form-control rounded-pill shadow-sm" placeholder="Например: 7А" required>
+                            </div>
+
+                            <div class="col-md-5 text-md-end">
+                                <label for="teacher_id" class="form-label fw-semibold mb-0">Руководитель</label>
+                            </div>
+                            <div class="col-md-7">
+                                <select name="teacher_id" id="teacher_id" class="form-select rounded-pill shadow-sm" required>
+                                    <option value="">Выбрать классного руководителя </option>
+
+                                @foreach($teachers as $teacher)
+                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Нижняя панель -->
+                    <div class="modal-footer border-0 justify-content-end pe-4 pb-3">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+                            <i class="bi bi-check-circle me-1"></i> Создать
+                        </button>
+                    </div>
+
                 </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <button type="submit" class="btn btn-primary">Создать</button>
-                </div>
-            </div>
             </form>
         </div>
     </div>
+
+
+
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col">
-                    <h1 class="page-header-title">Dashboard</h1>
+                    <h1 class="page-header-title">Панель управления </h1>
                 </div>
                 <!-- End Col -->
 
                 <div class="col-auto">
                     <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClass">
-                        <i class="bi-person-plus-fill me-1"></i> Invite users
+                        <i class="bi-person-plus-fill me-1"></i>Создать новый класс
                     </a>
                 </div>
             </div>

@@ -588,10 +588,13 @@
                     <div class="dropdown">
                         <a class="navbar-dropdown-account-wrapper" href="javascript:;" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                             <div class="avatar avatar-sm avatar-soft-primary avatar-circle avatr-img">
+
                             </div>
                         </a>
 
-                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account" aria-labelledby="accountNavbarDropdown" style="width: 16rem;">
+                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account"
+                             aria-labelledby="accountNavbarDropdown"
+                             style="width: auto; min-width: 16rem; max-width: 90vw; word-break: break-all;">
                             <div class="dropdown-item-text">
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-sm avatar-soft-primary avatar-circle avatr-img" >
@@ -607,7 +610,7 @@
 
 
 
-                            <a class="dropdown-item profile_pub" href="">Профиль &amp; аккаунт</a>
+                            <a class="dropdown-item profile_pub" href="{{ route('profile.edit') }}">Профиль &amp; аккаунт</a>
                             <a class="dropdown-item" href="{{route('profile.settings')}}">Настройки</a>
 
                             <div class="dropdown-divider"></div>
@@ -699,26 +702,21 @@
                     </div>
 
                     <div class="nav-item">
-                        <a class="nav-link {{ (request()->routeIs('teacher.course.create')) ? 'active' : '' }}" href="{{ route('teacher.course.create') }}">
+                        <a class="nav-link ">
                             <i class="bi bi-plus-circle nav-icon"></i>
-                            <span class="nav-link-title">Создать курс</span>
+                            <span class="nav-link-title">Учителя</span>
                         </a>
                     </div>
-
-
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle" href="#navbarVerticalMenuDashboards" role="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalMenuDashboards" aria-expanded="false" aria-controls="navbarVerticalMenuDashboards">
-                            <i class="bi-stickies nav-icon"></i>
-
-                            <span class="nav-link-title">Мои курсы</span>
+                        <a class="nav-link ">
+                            <i class="bi bi-plus-circle nav-icon"></i>
+                            <span class="nav-link-title">Ученики</span>
                         </a>
-
-                        <div id="navbarVerticalMenuDashboards" class="nav-collapse collapse" data-bs-parent="#navbarVerticalMenu" >
-
-
-                        </div>
-
                     </div>
+
+
+
+
 
                     <div class="nav-item">
                         <a class="nav-link {{ (request()->routeIs('dashboard')) ? 'active' : '' }}" href="{{ route('dashboard') }}">
