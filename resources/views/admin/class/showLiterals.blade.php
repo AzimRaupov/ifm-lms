@@ -2,8 +2,8 @@
 
 
 @section('content-main')
-@include('components.my.admin.add_class_modal')
-@include('components.my.admin.add_teacher_modal')
+    @include('components.my.admin.add_class_modal')
+    @include('components.my.admin.add_teacher_modal')
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
@@ -33,7 +33,7 @@
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex mb-3 align-items-center">
                                 <div class="me-2">
-                                    <h4 class="text-wrap">Классы: {{$class->literal_int}}</h4>
+                                    <h4 class="text-wrap">Классы: {{$class->literal_int.$class->literal_char}}</h4>
 
 
                                 </div>
@@ -45,8 +45,8 @@
                                             <i class="bi-three-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href=""><i class="bi-pencil dropdown-item-icon"></i> </a>
-                                            <a class="dropdown-item" href=""><i class="bi-pencil dropdown-item-icon"></i> Изменить Шаги</a>
+                                            <a class="dropdown-item" href="{{route('admin.class.show',$class->id)}}"><i class="bi-pencil dropdown-item-icon"></i>Добавить ученика</a>
+                                            <a class="dropdown-item" href="{{route('admin.class.teachers',$class->id)}}"><i class="bi-pencil dropdown-item-icon"></i>Добавить учителя</a>
 
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@
                             <div class="row mb-3 text-center">
                                 <div class="col">
                                     <div class="text-center">
-                                        <span class="d-block h4 mb-1">0</span>
+                                        <span class="d-block h4 mb-1">{{$class->students->count()}}</span>
                                         <span class="d-block fs-6">Ученики</span>
                                     </div>
                                 </div>
@@ -79,8 +79,8 @@
                             <div class="progress mb-3">
                                 <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                             </div>
-                            <a href="{{route('admin.class.showLiterals',$class->literal_int)}}" class="btn btn-primary mt-auto">
-                                Перейти
+                            <a href="{{route('admin.class.teachers',$class->id)}}" class="btn btn-primary mt-auto">
+                                Учителя
                             </a>
                         </div>
 

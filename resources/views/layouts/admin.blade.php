@@ -688,7 +688,7 @@
             <div class="navbar-vertical-content">
                 <div id="navbarVerticalMenu" class="nav nav-pills nav-vertical card-navbar-nav">
                     <!-- Collapse -->
-                    <span class="dropdown-header mt-4">Навигация</span>
+                    <span class="dropdown-header mt-1">Навигация</span>
                     <small class="bi-three-dots nav-subtitle-replacer"></small>
 
                     <div class="nav-item">
@@ -699,13 +699,18 @@
                     </div>
 
                     <div class="nav-item">
-                        <a class="nav-link {{ (request()->routeIs('teacher.course.create')) ? 'active' : '' }}" href="{{ route('teacher.course.create') }}">
+                        <a class="nav-link" href="{{ route('admin.teacher.index') }}">
                             <i class="bi bi-plus-circle nav-icon"></i>
-                            <span class="nav-link-title">Создать курс</span>
+                            <span class="nav-link-title">Учителя</span>
                         </a>
                     </div>
 
-
+                    <div class="nav-item">
+                        <a class="nav-link" href="">
+                            <i class="bi bi-plus-circle nav-icon"></i>
+                            <span class="nav-link-title">Классы</span>
+                        </a>
+                    </div>
                     <div class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#navbarVerticalMenuDashboards" role="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalMenuDashboards" aria-expanded="false" aria-controls="navbarVerticalMenuDashboards">
                             <i class="bi-stickies nav-icon"></i>
@@ -3638,75 +3643,80 @@
 <!-- JS Plugins Init. -->
 <script>
     $(document).on('ready', function () {
-        // INITIALIZATION OF DATERANGEPICKER
+        // INITIALIZATION OF DATATABLES
         // =======================================================
-        $('.js-daterangepicker').daterangepicker();
-
-        $('.js-daterangepicker-times').daterangepicker({
-            timePicker: true,
-            startDate: moment().startOf('hour'),
-            endDate: moment().startOf('hour').add(32, 'hour'),
-            locale: {
-                format: 'M/DD hh:mm A'
+        HSCore.components.HSDatatables.init($('#datatable'), {
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'd-none'
+                },
+                {
+                    extend: 'excel',
+                    className: 'd-none'
+                },
+                {
+                    extend: 'csv',
+                    className: 'd-none'
+                },
+                {
+                    extend: 'pdf',
+                    className: 'd-none'
+                },
+                {
+                    extend: 'print',
+                    className: 'd-none'
+                },
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child input[type="checkbox"]',
+                classMap: {
+                    checkAll: '#datatableCheckAll',
+                    counter: '#datatableCounter',
+                    counterInfo: '#datatableCounterInfo'
+                }
+            },
+            language: {
+                zeroRecords: `<div class="text-center p-4">
+              <img class="mb-3" src="./assets/svg/illustrations/oc-error.svg" alt="Image Description" style="width: 10rem;" data-hs-theme-appearance="default">
+              <img class="mb-3" src="./assets/svg/illustrations-light/oc-error.svg" alt="Image Description" style="width: 10rem;" data-hs-theme-appearance="dark">
+            <p class="mb-0">No data to show</p>
+            </div>`
             }
         });
 
-        var start = moment();
-        var end = moment();
+        const datatable = HSCore.components.HSDatatables.getItem(0)
 
-        function cb(start, end) {
-            $('#js-daterangepicker-predefined .js-daterangepicker-predefined-preview').html(start.format('MMM D') + ' - ' + end.format('MMM D, YYYY'));
-        }
+        $('#export-copy').click(function() {
+            datatable.button('.buttons-copy').trigger()
+        });
 
-        $('#js-daterangepicker-predefined').daterangepicker({
-            startDate: start,
-            endDate: end,
-            ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            }
-        }, cb);
+        $('#export-excel').click(function() {
+            datatable.button('.buttons-excel').trigger()
+        });
 
-        cb(start, end);
+        $('#export-csv').click(function() {
+            datatable.button('.buttons-csv').trigger()
+        });
+
+        $('#export-pdf').click(function() {
+            datatable.button('.buttons-pdf').trigger()
+        });
+
+        $('#export-print').click(function() {
+            datatable.button('.buttons-print').trigger()
+        });
+
+        $('.js-datatable-filter').on('change', function() {
+            var $this = $(this),
+                elVal = $this.val(),
+                targetColumnIndex = $this.data('target-column-index');
+
+            datatable.column(targetColumnIndex).search(elVal).draw();
+        });
     });
-
-
-    // INITIALIZATION OF DATATABLES
-    // =======================================================
-    HSCore.components.HSDatatables.init($('#datatable'), {
-        select: {
-            style: 'multi',
-            selector: 'td:first-child input[type="checkbox"]',
-            classMap: {
-                checkAll: '#datatableCheckAll',
-                counter: '#datatableCounter',
-                counterInfo: '#datatableCounterInfo'
-            }
-        },
-        language: {
-            zeroRecords: `<div class="text-center p-4">
-              <img class="mb-3" src="{{asset('assets/svg/illustrations/oc-error.svg')}}" alt="Image Description" style="width: 10rem;" data-hs-theme-appearance="default">
-              <img class="mb-3" src="{{asset('assets/svg/illustrations-light/oc-error.svg')}}" alt="Image Description" style="width: 10rem;" data-hs-theme-appearance="dark">
-            <p class="mb-0">No data to show</p>
-            </div>`
-        }
-    });
-
-    const datatable = HSCore.components.HSDatatables.getItem(0)
-
-    document.querySelectorAll('.js-datatable-filter').forEach(function (item) {
-        item.addEventListener('change',function(e) {
-            const elVal = e.target.value,
-                targetColumnIndex = e.target.getAttribute('data-target-column-index'),
-                targetTable = e.target.getAttribute('data-target-table');
-
-            HSCore.components.HSDatatables.getItem(targetTable).column(targetColumnIndex).search(elVal !== 'null' ? elVal : '').draw()
-        })
-    })
 </script>
 
 <!-- JS Plugins Init. -->

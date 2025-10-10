@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Sinf;
 use App\Models\StudentCourse;
+use App\Models\Subject;
 use App\Models\User;
 use Hamcrest\Core\Set;
 use Illuminate\Http\Request;
@@ -116,7 +118,13 @@ $user->save();
        }
         elseif($user->role=="admin"){
             $teachers=User::query()->where('role','teacher')->get();
-           return view('admin.dashboard',compact('teachers'));
+            $classes = Sinf::query()
+                ->select('literal_int')
+                ->groupBy('literal_int')
+                ->orderBy('literal_int', 'asc')
+                ->get();
+            $subjects=Subject::all();
+            return view('admin.dashboard',compact('teachers','classes','subjects'));
         }
     }
 

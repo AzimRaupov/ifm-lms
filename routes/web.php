@@ -23,6 +23,18 @@ Route::get('/courses',[\App\Http\Controllers\CourseController::class,'index'])->
 
 Route::middleware('auth')->group(function () {
 
+    Route::prefix('student')->group(function (){
+
+        Route::get('testrout',[\App\Http\Controllers\student\StudentController::class,'testroute']);
+
+    });
+
+
+
+
+
+
+
     Route::prefix('course')->group(function (){
         Route::get('/create',[\App\Http\Controllers\CourseController::class,'create'])->name('course.create');
         Route::get('/progress',[\App\Http\Controllers\CourseController::class,'progress'])->name('course.progress');

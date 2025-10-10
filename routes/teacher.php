@@ -4,6 +4,25 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(['auth', 'is_teacher'])->group(function () {
+
+     Route::prefix('class')->group(function (){
+
+         Route::get('/magazine/{id}',[\App\Http\Controllers\admin\MagazineController::class,'magazine_class'])->name('class.magazine');
+
+     });
+
+     Route::prefix('grade')->group(function (){
+
+         Route::post('/add',[\App\Http\Controllers\admin\GradeController::class,'add'])->name('grade.add');
+
+     });
+
+
+
+
+
+
+
    Route::get('/dashboard', [\App\Http\Controllers\teacher\TeacherController::class,'dashboard'])->name('dashboard');
     Route::prefix('test')->group(function (){
         Route::get('/edit',[\App\Http\Controllers\teacher\TestController::class,'edit'])->name('test.edit');

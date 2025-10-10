@@ -18,6 +18,8 @@ Route::post('/upload',[\App\Http\Controllers\api\create\CreateController::class,
 
 Route::post('/user/ping',[\App\Http\Controllers\api\UserController::class,'ping'])->name('user.ping');
 
+Route::post('user/add',[\App\Http\Controllers\api\UserController::class,'add'])->name('user.add');
+
 Route::prefix('/vocabulary')->group(function (){
        Route::post('/isset',[\App\Http\Controllers\api\VocabularyController::class,'isset'])->name('vocabulary.isset');
 });

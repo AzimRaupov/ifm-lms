@@ -52,6 +52,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
         ];
     }
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'teacher_subjects', 'teacher_id', 'subject_id');
+    }
     public function courses()
     {
        return $this->belongsToMany(Course::class,'student_courses','user_id','course_id')->withPivot(['complete']);

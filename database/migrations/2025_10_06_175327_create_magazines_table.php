@@ -6,21 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('sinfs', function (Blueprint $table) {
+        Schema::create('magazines', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('class_id')->constrained('sinfs');
+            $table->foreignId('subject_id')->constrained('subjects');
             $table->foreignId('teacher_id')->constrained('users');
-            $table->string('literal_int');
-            $table->string('literal_char');
             $table->timestamps();
         });
     }
 
-
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('sinfs');
+        Schema::dropIfExists('magazines');
     }
 };

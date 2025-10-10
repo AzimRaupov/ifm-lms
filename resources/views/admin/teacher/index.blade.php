@@ -3,86 +3,57 @@
 @section('body-class')
     navbar-vertical-aside-mini-mode
 @endsection
+@section('new')
+    HSCore.components.HSQuill.init('.js-quill')
+    HSCore.components.HSDropzone.init('.js-dropzone')
 
+@endsection
 @section('content-main')
-    <div class="table-responsive datatable-custom">
-        <table id="datatableColumnSearch" class="js-datatable table table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-               data-hs-datatables-options='{
-                 "order": [],
-                 "orderCellsTop": true
-               }'>
-            <thead class="thead-light">
-            <tr>
-                <th>Имя</th>
-                <th>Возраст</th>
-                <th>Номер</th>
 
-                <th>Почта</th>
-                <th>Предмет</th>
-            </tr>
-            <tr>
-                <form action="{{route('admin.teacher.store')}}" method="post">
-                    @csrf
-                <th>
-                    <input type="text" id="column1_search" name="name" class="form-control form-control-sm" placeholder="Поное имя">
-                </th>
-                    <th>
-                        <input type="number" id="column2_search" name="old" class="form-control form-control-sm" placeholder="возраст">
-                    </th>
+    @include('components.my.admin.add_teacher_modal')
 
-                    <th>
-                    <input type="number" id="column2_search" name="number" class="form-control form-control-sm" placeholder="Номер">
-                </th>
-                <th>
-                    <input type="text" id="column3_search" name="email" class="form-control form-control-sm" placeholder="Эл.Почта">
-                </th>
-                <th>
 
-                    <div class="tom-select-custom tom-select-custom-with-tags">
-                        <select class="js-select form-select" name="subjects[]" autocomplete="off" multiple
-                                data-hs-tom-select-options='{
-            "placeholder": "Select a person..."
-          }'>
-                        @foreach($subjects as $subject)
-                            <option value="{{$subject->id}}">{{$subject->subject}}</option>
-                        @endforeach
-                        </select>
-                    </div>
 
-                                   </th>
-                    <th>
-                        <input type="submit" value="Добавить" class="btn btn-primary">
-                    </th>
-                </form>
-            </tr>
-            </thead>
 
-            <tbody>
 
-            @foreach($teachers as $teacher)
 
-            <tr>
-                <td>
-                    <span class="d-block h5 text-hover-primary mb-0">{{$teacher->name}} <i class="bi-patch-check-fill text-primary" data-toggle="tooltip" data-bs-placement="top" title="Top endorsed"></i></span>
-                </td>
+    <div class="content container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-end">
+                <div class="col-sm mb-2 mb-sm-0">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-no-gutter">
+                            <li class="breadcrumb-item"><a class="breadcrumb-link" href="javascript:;">Админ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Учителя</li>
+                        </ol>
+                    </nav>
 
-                <td>
-                    <span class="d-block h5 mb-0">{{$teacher->number}}</span>
-                </td>
-                <td>{{$teacher->email}}</td>
-                <td>
-dsds
-                </td>
-            </tr>
+                    <h1 class="page-header-title">Учителя</h1>
+                </div>
+                <!-- End Col -->
 
-            @endforeach
-            </tbody>
-        </table>
+                <div class="col-sm-auto">
+                    <a class="btn btn-primary" href="javascript:;" data-bs-toggle="modal" data-bs-target="#add_teacher_modal">
+                        <i class="bi-plus me-1"></i> Добавить
+                    </a>
+                </div>
+                <!-- End Col -->
+            </div>
+            <!-- End Row -->
+
+
+        </div>
+        <!-- End Page Header -->
+
+
+@include('components.my.admin.teacher_table')
     </div>
 @endsection
 
 
 @section('script')
+
     <script>
         (function() {
             // INITIALIZATION OF SELECT
